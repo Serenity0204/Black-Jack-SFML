@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14 FATAL_ERROR) #FetchContent_MakeAvailable
 project(Black_Jack)
 
 #. . . . . . . . . . . . . . . . . . . .
@@ -7,10 +7,7 @@ if(MSVC)
     add_compile_options(/W4)
     add_link_options(/W4)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_BINARY_DIR}/bin)
-    # message("compiler: MSVC")
 else()
-    # message("compiler: NOT MSVC")
-    # add_compile_options(-Wall -Wextra -pedantic -Werror -Wl,--fatal-warnings)
     set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 endif()
 
@@ -27,32 +24,47 @@ endif()
 #. . . . . . . . . . . . . . . . . . . .
 
 # ------------------------------------
+# ------------------------------------
+find_package(GTest QUIET)
+if (NOT ${GTest_FOUND}) # GTest not found, FetchContent!
 include(FetchContent)
 FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/609281088cfefc76f9d0ce82e1ff6c30cc3591e5.zip
-)
-
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG        v1.13.0)
 FetchContent_MakeAvailable(googletest)
-
-# GoogleTest requires at least C++11
-set(CMAKE_CXX_STANDARD 11)
- 
-enable_testing() 
-
+endif()
+    
+# GoogleTest requires at least C++14
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# ------------------------------------
 
 # ------------------------------------
 
+set(SFML_VERSION "2.6.0")
+
+# Declare SFML as an external project
+FetchContent_Declare(
+  sfml
+  URL https://www.sfml-dev.org/files/SFML-${SFML_VERSION}-sources.zip
+)
+
+# Build SFML as part of the project
+FetchContent_MakeAvailable(sfml)
+
+# Set the C++ standard for SFML
+target_compile_features(sfml-graphics PUBLIC cxx_std_11)
+target_compile_features(sfml-window PUBLIC cxx_std_11)
+target_compile_features(sfml-system PUBLIC cxx_std_11)
 
 
-#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 #   Grab all cpp files from includes folder
-#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 set(INCLUDES_FOLDER includes)
-FILE(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}   "${INCLUDES_FOLDER}/*.cpp" )
-#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+FILE(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} CONFIGURE_DEPENDS "${INCLUDES_FOLDER}/*.cpp")
+#- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 
 
@@ -70,20 +82,12 @@ ADD_EXECUTABLE(test_points
 
 
 
-
-TARGET_LINK_LIBRARIES(main gtest)
-TARGET_LINK_LIBRARIES(test_points gtest)
+TARGET_LINK_LIBRARIES(test_points sfml-graphics sfml-window sfml-system)
+TARGET_LINK_LIBRARIES(main sfml-graphics sfml-window sfml-system)
+TARGET_LINK_LIBRARIES(main GTest::gtest_main)
+TARGET_LINK_LIBRARIES(test_points GTest::gtest_main)
 
 
 
 ## copy resources file to build
-file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
-
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
-find_package(SFML REQUIRED system window graphics network audio)
-if (SFML_FOUND)
-    include_directories(${SFML_INCLUDE_DIR})
-    target_link_libraries(main ${SFML_LIBRARIES})
-    target_link_libraries(test_points ${SFML_LIBRARIES})
-
-endif()
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR}/bin)

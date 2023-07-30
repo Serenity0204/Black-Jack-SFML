@@ -18,7 +18,7 @@ void Player::set_bet(int amount, bool did_lose)
     this->_bet += amount;
 }
 
-int Player::reset()
+void Player::reset()
 {
     this->_bet = 0;
 }

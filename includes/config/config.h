@@ -1,10 +1,9 @@
 #ifndef CONFIG_H
 #define CONFIG_H
-#include <bits/stdc++.h>
 #include "system.h"
 #include <SFML/Graphics.hpp>
+#include <bits/stdc++.h>
 using namespace std;
-
 
 class Config
 {
@@ -18,18 +17,16 @@ private:
 
     // load texture helper
     void _load_texture_helper();
+
 public:
     Config();
     ~Config();
-    void draw_constants(sf::RenderWindow &window, bool exclude=true);
+    void draw_constants(sf::RenderWindow& window, bool exclude = true);
     sf::Texture& get_texture(string index);
     sf::Font& get_font(int index);
 };
 
-
 // global instance here
 extern Config config;
-
-
 
 #endif

@@ -2,7 +2,7 @@
 #include <bits/stdc++.h>
 //------------------------------------------------------------------------------
 //Files we are testing:
-#include "../../includes/player/player.h"
+#include "../../includes/user/player.h"
 #include "../../includes/card_deck/card.h"
 
 
@@ -17,8 +17,7 @@ bool test_player_card1(bool debug=false)
   cards.push_back(Card("s", 1));
   cards.push_back(Card("s", 10));
   Player player;
-  player.calculate_points(cards);
-  int p = player.get_points();
+  int p = player.calculate_points(cards);
   if(debug)
   {
     cout << "Points: " << p << endl; 
@@ -36,8 +35,7 @@ bool test_player_card2(bool debug=false)
   cards.push_back(Card("s", 10));
 
   Player player;
-  player.calculate_points(cards);
-  int p = player.get_points();
+ int p =  player.calculate_points(cards);
   if(debug)
   {
     cout << "Points: " << p << endl; 
@@ -55,8 +53,7 @@ bool test_player_card3(bool debug=false)
   cards.push_back(Card("s", 9));
 
   Player player;
-  player.calculate_points(cards);
-  int p = player.get_points();
+ int p =  player.calculate_points(cards);
   if(debug)
   {
     cout << "Points: " << p << endl; 
@@ -73,8 +70,7 @@ bool test_player_card4(bool debug=false)
   cards.push_back(Card("s", 10));
 
   Player player;
-  player.calculate_points(cards);
-  int p = player.get_points();
+  int p = player.calculate_points(cards);
   if(debug)
   {
     cout << "Points: " << p << endl; 
